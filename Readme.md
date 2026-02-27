@@ -8,7 +8,7 @@ Este microserviço **não autentica usuários**, **não cria registros externos*
 
 ---
 
-## O que este serviço faz
+## O que esta API faz
 
 - Recebe dados básicos do usuário
 - Identifica o projeto solicitante
@@ -19,7 +19,7 @@ Este microserviço **não autentica usuários**, **não cria registros externos*
 
 ---
 
-## O que este serviço não faz
+## O que esta API não faz
 
 - Não cria usuários em outros sistemas
 - Não autentica ou mantém sessão
