@@ -10,11 +10,11 @@
     "prepare": "husky install",
     "commit": "cz"
   },
-    "config":{
-      "commitizen": {
-        "path": "cz-git"
-      }
-    },
+  "config": {
+    "commitizen": {
+      "path": "cz-git"
+    }
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -36,6 +36,7 @@
     "typeorm": "^0.3.28"
   },
   "devDependencies": {
+    "@types/nodemailer": "^7.0.11",
     "husky": "^9.1.7",
     "typescript": "^5.9.3"
   }
