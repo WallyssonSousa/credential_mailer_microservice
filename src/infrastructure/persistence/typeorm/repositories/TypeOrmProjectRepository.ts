@@ -22,4 +22,28 @@ export class TypeOrmProjectRepository implements ProjectRepositoryPort {
             logoUrl: entity.logoUrl
         })
     }
+
+    async save(project: Project): Promise<void> {
+        const entity = this.repository.create({
+            id: project.getId(),
+            name: project.getName(),
+            primaryColor: project.getPrimaryColor(),
+            logoUrl: project.getLogoUrl()
+        });
+
+        await this.repository.save(entity);
+    }
+
+    async findAll(): Promise<Project[]> {
+        const entities = await this.repository.find();
+
+        return entities.map(entity => 
+            new Project({
+                id: entity.id,
+                name: entity.name,
+                primaryColor: entity.primaryColor,
+                logoUrl: entity.logoUrl
+            })
+        )
+    }
 }
