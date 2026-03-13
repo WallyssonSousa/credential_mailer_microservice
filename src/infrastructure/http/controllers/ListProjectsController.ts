@@ -9,6 +9,8 @@ export class ListProjectsController {
     async handle(req: Request, res: Response): Promise<Response>{
         const projects = await this.listProjectsUseCase.execute();
 
-        return res.json(projects);
+        return res.json({
+            projects
+        });
     }
 }

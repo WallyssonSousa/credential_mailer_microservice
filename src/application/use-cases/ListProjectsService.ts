@@ -11,7 +11,7 @@ export class ListProjectsService implements ListProjectsUseCase {
 
         return projects.map(project => ({
             id: project.getId(),
-            name: project.getName(), 
+            name: project.getName(),
             primaryColor: project.getPrimaryColor(),
             logoUrl: project.getLogoUrl()
         }));
