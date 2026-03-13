@@ -5,6 +5,8 @@ export const env = {
 
   jwtSecret: process.env.JWT_SECRET || 'change_me',
 
+  projectAdminPassword: process.env.PASSWORD,
+
   smtp: {
     host: process.env.SMTP_HOST || '',
     port: Number(process.env.SMTP_PORT) || 587,
