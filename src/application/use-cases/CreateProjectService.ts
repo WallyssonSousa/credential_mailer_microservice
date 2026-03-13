@@ -4,7 +4,7 @@ import { Project } from "../../domain/entities/Project";
 
 import { InvalidAdminPaswordError } from "../../domain/errors/InvalidAdminPasswordError";
 import { env } from "../../config/env";
-import { v4 as uuid } from "uuid";
+import { v4 as uuidv4 } from "uuid";
 
 export class CreateProjectService implements CreateProjectUseCase {
     constructor(
@@ -17,7 +17,7 @@ export class CreateProjectService implements CreateProjectUseCase {
         }
 
         const project = new Project({
-            id: uuid(),
+            id: uuidv4(),
             name: input.name,
             primaryColor: input.primaryColor,
             logoUrl: input.logoUrl

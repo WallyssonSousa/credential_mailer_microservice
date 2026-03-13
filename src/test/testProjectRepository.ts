@@ -4,7 +4,7 @@ import { ProjectEntity } from "../infrastructure/persistence/typeorm/entities/Pr
 
 async function test() {
 
-  console.log("Inicializando banco");
+  console.log("Inicializando bancoss");
 
   await AppDataSource.initialize();
 
