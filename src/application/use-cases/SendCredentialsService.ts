@@ -18,7 +18,7 @@ export class SendCredentialsService implements SendCredentialsUseCase {
     private readonly mailProvider: MailProviderPort
   ) {}
 
-  async execute(input: SendCredentialsInput): Promise<void> {
+  async execute(input: SendCredentialsInput): Promise<{ success: boolean }> {
     const project = await this.projectRepository.findById(input.projectId);
 
     if (!project) {
@@ -41,6 +41,8 @@ export class SendCredentialsService implements SendCredentialsUseCase {
       logoUrl: project.getLogoUrl(),
     }),
   });
+
+    return { success: true };
   }
 
 }

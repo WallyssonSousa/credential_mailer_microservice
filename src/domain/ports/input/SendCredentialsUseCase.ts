@@ -7,5 +7,5 @@ export interface SendCredentialsInput {
 }
 
 export interface SendCredentialsUseCase {
-    execute(input: SendCredentialsInput): Promise<void>;
+    execute(input: SendCredentialsInput): Promise<{success: boolean}>;
 }
