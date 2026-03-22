@@ -1,167 +1,340 @@
-# Credential Mailer Microservice
-
-Microserviço responsável por **gerar credenciais iniciais e enviar e-mails transacionais** para usuários, de forma segura e reutilizável por múltiplos sistemas.
-
-O serviço recebe **nome, e-mail e identificação do projeto**, gera uma senha/token temporário com JWT e envia um **e-mail HTML personalizado** conforme o projeto solicitante.
-
-Este microserviço **não autentica usuários**, **não cria registros externos** e **não persiste senhas**.
+# 📘 Credential Mailer Microservice — Documentação Completa
 
 ---
 
-## O que esta API faz
+# 📌 Visão Geral
 
-- Recebe dados básicos do usuário
-- Identifica o projeto solicitante
-- Gera senha/token seguro com JWT
-- Renderiza template de e-mail dinâmico
-- Envia e-mail transacional via SMTP
-- Retorna o status da operação
+Microserviço responsável por **gerar credenciais iniciais e enviar e-mails transacionais**, com suporte a múltiplos projetos (multi-tenant).
 
----
+O serviço:
 
-## O que esta API não faz
-
-- Não cria usuários em outros sistemas
-- Não autentica ou mantém sessão
-- Não armazena senhas ou tokens
-- Não depende de regras de negócio externas
+* Gera token JWT seguro
+* Gera senha temporária
+* Envia e-mail personalizado
+* Permite gerenciamento de projetos
 
 ---
 
-## Arquitetura
+# 🚫 O que NÃO faz
 
-Este projeto segue **estritamente a Arquitetura Hexagonal (Ports and Adapters)**, com domínio isolado e infraestrutura desacoplada.
+* Não autentica usuários
+* Não cria usuários em outros sistemas
+* Não armazena senhas
+* Não gerencia sessão
+
+---
+
+# 🧠 Fluxo do Sistema
+
+## Envio de credenciais
+
+1. Recebe request
+2. Valida e-mail
+3. Busca projeto
+4. Gera token JWT (15min)
+5. Gera senha temporária
+6. Renderiza HTML
+7. Envia e-mail via SMTP
+
+---
+
+## Gestão de projetos
+
+1. Admin cria projeto
+2. Projeto salvo no banco
+3. APIs utilizam projectId
+4. E-mails são personalizados
+
+---
+
+# 🔐 Segurança
+
+## Admin Password
+
+Obrigatório para criar projetos.
+
+Comparado com variável de ambiente:
 
 ```
-src/
-├── domain/
-│ ├── entities/
-│ │ └── Project.ts
-│ ├── value-objects/
-│ │ └── Email.ts
-│ ├── ports/
-│ │ ├── input/
-│ │ │ └── SendCredentialsUseCase.ts
-│ │ └── output/
-│ │ ├── MailProviderPort.ts
-│ │ ├── TokenProviderPort.ts
-│ │ └── ProjectRepositoryPort.ts
-│ └── errors/
-│ └── DomainError.ts
-│
-├── application/
-│ └── use-cases/
-│ └── SendCredentialsService.ts
-│
-├── infrastructure/
-│ ├── http/
-│ │ ├── controllers/
-│ │ │ └── SendCredentialsController.ts
-│ │ └── routes.ts
-│ │
-│ ├── mail/
-│ │ └── NodemailerAdapter.ts
-│ │
-│ ├── token/
-│ │ └── JwtAdapter.ts
-│ │
-│ ├── persistence/
-│ │ └── typeorm/
-│ │ ├── entities/
-│ │ │ └── ProjectEntity.ts
-│ │ └── repositories/
-│ │ └── ProjectRepository.ts
-│ │
-│ └── templates/
-│ └── credential-email.hbs
-│
-├── config/
-│ ├── env.ts
-│ └── database.ts
-│
-├── server.ts
-└── app.ts
+PASSWORD
 ```
 
 ---
 
-## Tecnologias
+## JWT
 
-- Node.js
-- Express
-- TypeScript
-- PostgreSQL
-- TypeORM
-- JWT
-- Nodemailer
-- Handlebars
+Payload:
 
----
-
-## Como usar o microserviço
-
-### Endpoint principal
-
-**POST** `/send-credentials`
-
-Este endpoint gera as credenciais e envia o e-mail ao usuário.
-
----
-
-### Request Body
-
-```json
+```
 {
-  "name": "Wallysson Sousa",
-  "email": "wallysson@gmail.com.br",
-  "projectKey": "Credential Mailer Microservice"
-}
-
-```
-
-### Como usar o microserviço
-
-```
-| Campo      | Tipo   | Descrição                         |
-| ---------- | ------ | --------------------------------- |
-| name       | string | Nome do usuário                   |
-| email      | string | E-mail do destinatário            |
-| projectKey | string | Identificador do projeto chamador |
-```
-
-```json
-{
-  "success": true,
-  "message": "Credenciais enviadas com sucesso"
+  email: string,
+  projectId: string
 }
 ```
 
-```json
+Expiração: 15 minutos
+
+---
+
+# ⚙️ Variáveis de Ambiente
+
+```
+PORT=3000
+
+JWT_SECRET=super_secret_key
+
+PASSWORD=admin123
+
+SMTP_HOST=smtp.seuprovedor.com
+SMTP_PORT=587
+SMTP_USER=usuario
+SMTP_PASS=senha
+SMTP_FROM="No Reply <noreply@seuprojeto.com>"
+
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=postgres
+DB_PASSWORD=postgres
+DB_NAME=credential_mailer
+```
+
+---
+
+# 📡 Endpoints
+
+## Health Check
+
+GET /api/health
+
+Response:
+
+```
+{ "status": "ok" }
+```
+
+---
+
+# 📁 Projetos
+
+## Criar Projeto
+
+POST /api/projects
+
+Body:
+
+```
+{
+  "name": "Meu Sistema",
+  "primaryColor": "#6C5CE7",
+  "logoUrl": "https://logo.com",
+  "loginUrl": "https://login.com",
+  "adminPassword": "admin123"
+}
+```
+
+Response:
+
+```
+{ "message": "Projeto criado com sucesso" }
+```
+
+---
+
+## Listar Projetos
+
+GET /api/projects
+
+Response:
+
+```
+{
+  "projects": [
+    {
+      "id": "uuid",
+      "name": "Meu Sistema",
+      "primaryColor": "#6C5CE7",
+      "logoUrl": "https://..."
+    }
+  ]
+}
+```
+
+---
+
+## Atualizar Projeto
+
+PUT /api/projects/:id
+
+Body:
+
+```
+{
+  "name": "Novo Nome",
+  "primaryColor": "#FF5733",
+  "logoUrl": "https://nova-logo.com",
+  "loginUrl": "https://novo-login.com"
+}
+```
+
+Response:
+
+```
+{ "success": true }
+```
+
+---
+
+## Deletar Projeto
+
+DELETE /api/projects/:id
+
+Response:
+
+```
+{ "success": true }
+```
+
+---
+
+# ✉️ Envio de Credenciais
+
+POST /api/send-credentials
+
+Body:
+
+```
+{
+  "name": "Wallysson",
+  "email": "email@email.com",
+  "projectId": "uuid"
+}
+```
+
+Response:
+
+```
+{ "message": "Credenciais enviadas com sucesso!" }
+```
+
+---
+
+# ❗ Erros
+
+Formato:
+
+```
 {
   "success": false,
-  "error": "PROJECT_NOT_FOUND"
+  "error": "CODE",
+  "message": "Descrição"
 }
 ```
 
-#### Possíveis erros:
+## Possíveis erros
+
+* PROJECT_NOT_FOUND
+* INVALID_EMAIL
+* INVALID_ADMIN_PASSWORD
+* SMTP_ERROR
+* INTERNAL_ERROR
+
+---
+
+# 🧱 Modelo de Dados
+
+## Project
 
 ```
-Código	                Descrição
-PROJECT_NOT_FOUND	Projeto não registrado
-INVALID_EMAIL	E-mail inválido
-SMTP_ERROR	Falha no envio do e-mail
-INTERNAL_ERROR	Erro interno
+{
+  id: string,
+  name: string,
+  primaryColor: string,
+  logoUrl?: string,
+  loginUrl: string
+}
 ```
 
 ---
 
-## Criador
+# 🧪 Regras de Negócio
 
-Este microserviço foi projetado e desenvolvido por **Wallysson Oliveira**, com foco em:
+* Criação exige senha admin
+* UUID gerado automaticamente
+* Token expira em 15 minutos
+* Atualização parcial
+* Exclusão validada
 
-- Arquitetura Hexagonal aplicada de forma rigorosa
-- Microserviços desacoplados e reutilizáveis
-- Boas práticas de engenharia de software
-- Código limpo, testável e orientado a domínio
+---
 
-O objetivo é fornecer uma base sólida, extensível e profissional para uso em ambientes distribuídos e corporativos.
+# 🧩 Integração
+
+Exemplo:
+
+```
+await axios.post("/api/send-credentials", {
+  name: user.name,
+  email: user.email,
+  projectId: "uuid"
+});
+```
+
+---
+
+# 🏗️ Arquitetura
+
+* Hexagonal Architecture
+* DDD
+* Ports and Adapters
+
+---
+
+# 🔌 Ports
+
+## Input
+
+* CreateProjectUseCase
+* ListProjectsUseCase
+* UpdateProjectUseCase
+* DeleteProjectUseCase
+* SendCredentialsUseCase
+
+## Output
+
+* ProjectRepositoryPort
+* MailProviderPort
+* TokenProviderPort
+
+---
+
+# 📬 Template de Email
+
+* Responsivo
+* Dark mode
+* Token formatado
+* Link direto
+* Expiração: 15min
+
+---
+
+# 🚀 Boas práticas
+
+* Não expor adminPassword
+* Usar HTTPS
+* Implementar retry
+* Monitorar logs
+
+---
+
+# 🧠 Observações
+
+* Token ≠ senha
+* Senha é apenas visual
+* Autenticação deve validar JWT
+
+---
+
+# 👨‍💻 Autor
+
+Wallysson Oliveira
+
+Microserviço desenvolvido com foco em arquitetura limpa, escalabilidade e reutilização.

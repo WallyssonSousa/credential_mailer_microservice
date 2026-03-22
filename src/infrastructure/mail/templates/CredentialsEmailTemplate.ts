@@ -4,272 +4,182 @@ interface CredentialsEmailTemplateData {
   token: string;
   primaryColor: string;
   logoUrl?: string;
+  loginUrl?: string;
 }
 
 export function buildCredentialsEmailTemplate(
   data: CredentialsEmailTemplateData
 ): string {
+  const year = new Date().getFullYear();
+  const loginUrl = data.loginUrl ?? "#";
 
   const projectLogo = data.logoUrl
-    ? `<img src="${data.logoUrl}" alt="${data.projectName}" style="height:42px;margin-top:10px"/>`
-    : `<div style="font-weight:600;font-size:16px;color:#1d1d1f">${data.projectName}</div>`;
+    ? `<img src="${data.logoUrl}" alt="${data.projectName}" style="height:36px;display:block;margin:0 auto;">`
+    : `<span style="font-weight:700;font-size:15px;color:#1a1a2e;">${data.projectName}</span>`;
 
-  return `
+  // Split token into groups of 3 for readability (e.g. ABC-DEF-GHI)
+  const formattedToken = data.token.length >= 6
+    ? data.token.match(/.{1,3}/g)?.join("-") ?? data.token
+    : data.token;
 
-<div style="
-  background:#f5f5f7;
-  padding:60px 20px;
-  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
-">
+  return `<!DOCTYPE html>
+<html lang="pt-BR" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="supported-color-schemes" content="light dark" />
+  <title>Acesso — ${data.projectName}</title>
+  <style>
+    :root { color-scheme: light dark; }
 
-<table align="center" width="600"
-style="
-  background:#ffffff;
-  border-radius:20px;
-  overflow:hidden;
-  box-shadow:0 25px 60px rgba(0,0,0,0.08);
-">
+    body {
+      margin: 0; padding: 0;
+      background-color: #f0f2f5;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      -webkit-text-size-adjust: 100%;
+    }
 
-<!-- TOP SAAS BAR -->
-<tr>
-<td style="
-  height:6px;
-  background:linear-gradient(90deg,#4F8CFF,#7A5CFF,#FF4FCB);
-"></td>
-</tr>
+    /* ── Dark mode ── */
+    @media (prefers-color-scheme: dark) {
+      body, .bg          { background-color: #0d0d12 !important; }
+      .card              { background-color: #16161f !important; border-color: #2a2a38 !important; }
+      .header            { background-color: #1c1c28 !important; border-color: #2a2a38 !important; }
+      .footer            { background-color: #1c1c28 !important; border-color: #2a2a38 !important; }
+      .title             { color: #f0f0f8 !important; }
+      .body-text         { color: #9898b0 !important; }
+      .token-box         { background-color: #1e1e2e !important; border-color: #2e2e42 !important; }
+      .token-label       { color: #6060a0 !important; }
+      .token-value       { color: inherit !important; }
+      .footer-text       { color: #505065 !important; }
+      .logo-text         { color: #e0e0f0 !important; }
+    }
 
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .wrapper  { padding: 16px 8px !important; }
+      .card     { border-radius: 14px !important; }
+      .body-pad { padding: 24px 20px !important; }
+      .header   { padding: 20px !important; }
+      .footer   { padding: 16px 20px !important; }
+      .title    { font-size: 18px !important; }
+      .btn-td   { display: block !important; width: 100% !important; }
+      .btn-a    { display: block !important; text-align: center !important; padding: 13px 0 !important; }
+    }
+  </style>
+</head>
 
-<!-- HEADER API -->
-<tr>
-<td style="
-padding:30px;
-text-align:center;
-border-bottom:1px solid #f2f2f2;
-background:#ffffff;
-">
+<body class="bg">
+<div class="wrapper" style="padding:32px 12px;">
 
-<img src="https://lh3.googleusercontent.com/pw/AP1GczP4qOBgkx3EBFfSB2K1o65lU6Cpdbcz_XJ-ANUzzr4OtzMUNgh2HnW_Gy3J5AyWh5anyfWVvXf2cuGLHP07BzX_UHH3asOc5KSgPzrgBFUV0qeiH7uLRpebfHeDLqkT5V55f_Wn1R291hj7m7sQAscw=w1418-h945-s-no-gm" height="140"/>
+  <!-- Outer centering table -->
+  <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
+  <tr><td align="center">
 
-<div style="
-font-size:12px;
-color:#86868b;
-margin-top:6px;
-letter-spacing:0.4px;
-">
-Secure Email Delivery API
-</div>
+    <!-- Card -->
+    <table class="card" width="560" cellpadding="0" cellspacing="0" role="presentation"
+      style="max-width:560px;width:100%;background:#ffffff;border-radius:18px;border:1px solid #e4e6ed;overflow:hidden;">
 
-</td>
-</tr>
+      <!-- Accent bar -->
+      <tr>
+        <td style="height:4px;background:linear-gradient(90deg,${data.primaryColor},#a78bfa,#f472b6);font-size:0;line-height:0;">&nbsp;</td>
+      </tr>
 
+      <!-- Header -->
+      <tr>
+        <td class="header" align="center"
+          style="padding:22px 30px 18px;border-bottom:1px solid #e4e6ed;background:#fafbff;">
+          ${projectLogo}
+          <div class="body-text" style="font-size:11px;color:#9090a8;margin-top:6px;letter-spacing:.5px;text-transform:uppercase;">
+            Autenticação segura
+          </div>
+        </td>
+      </tr>
 
-<!-- CLIENT BRANDING -->
-<tr>
-<td style="padding:36px;background:#ffffff">
+      <!-- Body -->
+      <tr>
+        <td class="body-pad" style="padding:28px 30px 24px;">
 
-<div style="
-border-radius:16px;
-padding:28px;
-background:linear-gradient(135deg, ${data.primaryColor}15, ${data.primaryColor}08);
-border:1px solid ${data.primaryColor}25;
-text-align:center;
-">
+          <p class="title" style="margin:0 0 6px;font-size:20px;font-weight:700;color:#1a1a2e;line-height:1.3;">
+            Olá, ${data.userName} 👋
+          </p>
+          <p class="body-text" style="margin:0 0 20px;font-size:14px;color:#6c6c84;line-height:1.6;">
+            Seu acesso ao <strong style="color:#1a1a2e;">${data.projectName}</strong> foi criado.
+            Use o código abaixo para entrar:
+          </p>
 
-<div style="
-font-size:11px;
-letter-spacing:1.2px;
-text-transform:uppercase;
-color:#6e6e73;
-margin-bottom:14px;
-">
-Mensagem enviada por
-</div>
+          <!-- Token box -->
+          <table class="token-box" width="100%" cellpadding="0" cellspacing="0" role="presentation"
+            style="border:1px solid #e4e6ed;border-radius:12px;background:#f8f8fc;margin-bottom:22px;">
+            <tr>
+              <td align="center" style="padding:18px 16px;">
+                <div class="token-label"
+                  style="font-size:10px;font-weight:600;letter-spacing:2.5px;color:#8080a8;text-transform:uppercase;margin-bottom:8px;">
+                  Código de acesso
+                </div>
+                <div class="token-value"
+                  style="font-size:22px;font-weight:700;letter-spacing:6px;color:${data.primaryColor};font-variant-numeric:tabular-nums;">
+                  ${formattedToken}
+                </div>
+                <div class="token-label"
+                  style="font-size:11px;color:#9090a8;margin-top:8px;">
+                  ⏱ Expira em 15 minutos
+                </div>
+              </td>
+            </tr>
+          </table>
 
-<div style="
-background:${data.primaryColor};
-color:white;
-display:inline-block;
-padding:6px 16px;
-border-radius:20px;
-font-size:12px;
-font-weight:600;
-margin-bottom:16px;
-box-shadow:0 6px 18px ${data.primaryColor}40;
-">
-${data.projectName}
-</div>
+          <!-- CTA button (Outlook-safe VML + HTML) -->
+          <!--[if mso]>
+          <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word"
+            href="${loginUrl}" style="height:44px;v-text-anchor:middle;width:200px;" arcsize="23%"
+            fillcolor="${data.primaryColor}" stroke="f">
+            <w:anchorlock/>
+            <center style="color:#ffffff;font-family:sans-serif;font-size:14px;font-weight:700;">
+              Acessar plataforma
+            </center>
+          </v:roundrect>
+          <![endif]-->
+          <!--[if !mso]><!-->
+          <table align="center" cellpadding="0" cellspacing="0" role="presentation">
+            <tr>
+              <td class="btn-td" align="center"
+                style="border-radius:10px;background:${data.primaryColor};">
+                <a class="btn-a" href="${loginUrl}" target="_blank" rel="noopener"
+                  style="display:inline-block;padding:13px 28px;font-size:14px;font-weight:700;
+                         color:#ffffff;text-decoration:none;border-radius:10px;
+                         font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+                  Acessar plataforma →
+                </a>
+              </td>
+            </tr>
+          </table>
+          <!--<![endif]-->
 
-<div style="margin-top:6px">
-${projectLogo}
-</div>
+        </td>
+      </tr>
 
-<div style="
-margin-top:14px;
-font-size:12px;
-color:#6e6e73;
-">
-Esta mensagem foi enviada pela plataforma do cliente
-</div>
+      <!-- Footer -->
+      <tr>
+        <td class="footer" align="center"
+          style="padding:16px 30px;border-top:1px solid #e4e6ed;background:#fafbff;">
+          <p class="footer-text" style="margin:0;font-size:11px;color:#9090a8;line-height:1.6;">
+            © ${year} ${data.projectName} &nbsp;·&nbsp; Email enviado automaticamente — não responda
+          </p>
+          <p class="footer-text" style="margin:6px 0 0;font-size:10px;color:#b0b0c4;">
+            Se você não solicitou este acesso, ignore este email.
+          </p>
+        </td>
+      </tr>
 
-</div>
+    </table>
+    <!-- /Card -->
 
-</td>
-</tr>
-
-
-<!-- BODY -->
-<tr>
-<td style="padding:50px">
-
-<h2 style="
-margin:0 0 12px 0;
-font-size:22px;
-font-weight:600;
-color:#1d1d1f;
-">
-Olá, ${data.userName}
-</h2>
-
-<p style="
-font-size:15px;
-color:#6e6e73;
-line-height:1.7;
-margin-bottom:24px;
-">
-Seu acesso ao sistema <strong>${data.projectName}</strong>
-foi criado com sucesso.
-</p>
-
-<p style="
-font-size:15px;
-color:#6e6e73;
-line-height:1.7;
-margin-bottom:30px;
-">
-Utilize o código abaixo para autenticar seu acesso:
-</p>
-
-
-<div style="
-margin:35px 0;
-padding:30px;
-border-radius:16px;
-border:1px solid #e8e8ed;
-background:#fafafa;
-text-align:center;
-">
-
-<div style="
-font-size:11px;
-letter-spacing:2px;
-color:#86868b;
-margin-bottom:12px;
-">
-ACCESS CODE
-</div>
-
-<div style="
-font-size:30px;
-font-weight:700;
-letter-spacing:8px;
-color:${data.primaryColor};
-">
-${data.token}
-</div>
-
-<div style="
-font-size:12px;
-margin-top:12px;
-color:#8e8e93;
-">
-Expira em 15 minutos
-</div>
+  </td></tr>
+  </table>
 
 </div>
-
-
-<!-- BUTTON -->
-<div style="text-align:center;margin-top:40px">
-
-<a href="#"
-style="
-background:${data.primaryColor};
-color:white;
-text-decoration:none;
-padding:15px 34px;
-border-radius:12px;
-font-weight:600;
-font-size:14px;
-display:inline-block;
-box-shadow:0 12px 30px rgba(0,0,0,0.15);
-">
-Acessar plataforma
-</a>
-
-</div>
-
-</td>
-</tr>
-
-
-<tr>
-<td style="
-padding:22px;
-text-align:center;
-border-top:1px solid #f0f0f0;
-background:#fafafa;
-">
-
-<div style="
-display:inline-block;
-padding:8px 14px;
-background:#ffffff;
-border-radius:20px;
-border:1px solid #ececec;
-font-size:11px;
-color:#6e6e73;
-">
-
-🚀 Delivered securely by <strong>SendEmail API</strong>
-
-</div>
-
-</td>
-</tr>
-
-
-<!-- FOOTER -->
-<tr>
-<td style="
-padding:30px;
-text-align:center;
-background:#fafafa;
-">
-
-<img src="https://lh3.googleusercontent.com/pw/AP1GczP4qOBgkx3EBFfSB2K1o65lU6Cpdbcz_XJ-ANUzzr4OtzMUNgh2HnW_Gy3J5AyWh5anyfWVvXf2cuGLHP07BzX_UHH3asOc5KSgPzrgBFUV0qeiH7uLRpebfHeDLqkT5V55f_Wn1R291hj7m7sQAscw=w1418-h945-s-no-gm" height="100"/>
-
-<div style="
-font-size:12px;
-color:#8e8e93;
-margin-top:10px;
-">
-Professional Email Infrastructure
-</div>
-
-<div style="
-font-size:11px;
-color:#8e8e93;
-margin-top:8px;
-">
-© ${new Date().getFullYear()} SendEmail API
-</div>
-
-</td>
-</tr>
-
-</table>
-
-</div>
-
-`;
+</body>
+</html>`;
 }

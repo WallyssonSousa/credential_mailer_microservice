@@ -13,7 +13,8 @@ export class ListProjectsService implements ListProjectsUseCase {
             id: project.getId(),
             name: project.getName(),
             primaryColor: project.getPrimaryColor(),
-            logoUrl: project.getLogoUrl()
+            logoUrl: project.getLogoUrl(),
+            loginUrl: project.getLoginUrl()
         }));
     }
 }

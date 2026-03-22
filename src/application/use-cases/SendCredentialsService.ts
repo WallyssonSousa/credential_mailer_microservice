@@ -11,6 +11,8 @@ import { buildCredentialsEmailTemplate } from '../../infrastructure/mail/templat
 
 import { ProjectNotFoundError } from '../../domain/errors/ProjectNotFoundError';
 
+import { generateTemporaryPassword } from "../utils/generateTemporaryPassword";
+
 export class SendCredentialsService implements SendCredentialsUseCase {
   constructor(
     private readonly projectRepository: ProjectRepositoryPort,
@@ -20,29 +22,33 @@ export class SendCredentialsService implements SendCredentialsUseCase {
 
   async execute(input: SendCredentialsInput): Promise<{ success: boolean }> {
     const project = await this.projectRepository.findById(input.projectId);
+    if (!project) throw new ProjectNotFoundError(input.projectId);
 
-    if (!project) {
-      throw new ProjectNotFoundError(input.projectId);
-    }
+    const email = input.email.getValue();
+    const projectName = project.getName();
 
     const token = this.tokenProvider.generate({
-      email: input.email.getValue(),
+      email,
       projectId: project.getId(),
     });
 
-   await this.mailProvider.send({
-    to: input.email.getValue(),
-    subject: `Bem-vindo ao ${project.getName()}`,
-    html: buildCredentialsEmailTemplate({
-      userName: input.name,
-      projectName: project.getName(),
-      token,
-      primaryColor: project.getPrimaryColor(),
-      logoUrl: project.getLogoUrl(),
-    }),
-  });
+    const tempPassword = generateTemporaryPassword(8);
+
+    const loginLink = `${project.getLoginUrl()}?token=${token}`;
+
+    await this.mailProvider.send({
+      to: email,
+      subject: `Bem-vindo ao ${projectName}`,
+      html: buildCredentialsEmailTemplate({
+        userName: input.name,
+        projectName,
+        token: tempPassword, 
+        primaryColor: project.getPrimaryColor(),
+        logoUrl: project.getLogoUrl(),
+        loginUrl: loginLink,
+      }),
+    });
 
     return { success: true };
   }
-
 }

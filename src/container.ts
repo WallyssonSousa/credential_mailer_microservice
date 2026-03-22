@@ -12,6 +12,12 @@ import { CreateProjectController } from "./infrastructure/http/controllers/Creat
 import { ListProjectsService } from "./application/use-cases/ListProjectsService";
 import { ListProjectsController } from "./infrastructure/http/controllers/ListProjectsController";
 
+import { UpdateProjectService } from "./application/use-cases/UpdateProjectService";
+import { DeleteProjectService } from "./application/use-cases/DeleteProjectService";
+
+import { UpdateProjectController } from "./infrastructure/http/controllers/UpdateProjectController";
+import { DeleteProjectController } from "./infrastructure/http/controllers/DeleteProjectController";
+
 export async function buildSendCredentialsController() {
     const projectRepository = new TypeOrmProjectRepository(
         AppDataSource.getRepository(ProjectEntity)
@@ -48,4 +54,24 @@ export async function buildListProjectsController(){
     const service = new ListProjectsService(projectRepository);
 
     return new ListProjectsController(service);
+}
+
+export async function buildUpdateProjectController() {
+    const projectRepository = new TypeOrmProjectRepository(
+        AppDataSource.getRepository(ProjectEntity)
+    );
+
+    const service = new UpdateProjectService(projectRepository);
+
+    return new UpdateProjectController(service);
+}
+
+export async function buildDeleteProjectController() {
+    const projectRepository = new TypeOrmProjectRepository(
+        AppDataSource.getRepository(ProjectEntity)
+    );
+
+    const service = new DeleteProjectService(projectRepository);
+
+    return new DeleteProjectController(service);
 }
