@@ -85,17 +85,17 @@ JWT_SECRET=super_secret_key
 
 PASSWORD=admin123
 
-SMTP_HOST=smtp.seuprovedor.com
-SMTP_PORT=587
-SMTP_USER=usuario
-SMTP_PASS=senha
-SMTP_FROM="No Reply <noreply@seuprojeto.com>"
+SMTP_HOST=
+SMTP_PORT=
+SMTP_USER=
+SMTP_PASS=
+SMTP_FROM=
 
-DB_HOST=localhost
-DB_PORT=5432
-DB_USER=postgres
-DB_PASSWORD=postgres
-DB_NAME=credential_mailer
+DB_HOST=
+DB_PORT=
+DB_USER=
+DB_PASSWORD=
+DB_NAME=
 ```
 
 ---
