@@ -79,11 +79,11 @@ Expiração: 15 minutos
 # ⚙️ Variáveis de Ambiente
 
 ```
-PORT=3000
+PORT=
 
-JWT_SECRET=super_secret_key
+JWT_SECRET=
 
-PASSWORD=admin123
+PASSWORD=
 
 SMTP_HOST=
 SMTP_PORT=
