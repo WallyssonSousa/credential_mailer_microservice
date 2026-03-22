@@ -7,13 +7,14 @@ export class CreateProjectController {
     ) {}
 
     async handle(req: Request, res: Response): Promise<Response>{
-        const { name, primaryColor, logoUrl, adminPassword } = req.body;
+        const { name, primaryColor, logoUrl, loginUrl, adminPassword } = req.body;
 
         await this.createProjectUseCase.execute({ 
             name,
             primaryColor,
             logoUrl,
-            adminPassword
+            loginUrl,
+            adminPassword, 
         });
 
         return res.status(201).json({

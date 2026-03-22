@@ -14,4 +14,7 @@ export class ProjectEntity{
     @Column({ name: "logo_url", nullable: true})
     logoUrl?: string;
 
+    @Column({ name: "login_url"})
+    loginUrl!: string;
+
 }

@@ -9,9 +9,9 @@ export class TypeOrmProjectRepository implements ProjectRepositoryPort {
     ) {}
 
     async findById(id: string): Promise<Project | null> {
-        const entity = await this.repository.findOne({ where: {id}});
+        const entity = await this.repository.findOne({ where: { id } });
 
-        if(!entity){ 
+        if (!entity) {
             return null;
         }
 
@@ -19,8 +19,23 @@ export class TypeOrmProjectRepository implements ProjectRepositoryPort {
             id: entity.id,
             name: entity.name,
             primaryColor: entity.primaryColor,
-            logoUrl: entity.logoUrl
-        })
+            logoUrl: entity.logoUrl,
+            loginUrl: entity.loginUrl
+        });
+    }
+
+    async findAll(): Promise<Project[]> {
+        const entities = await this.repository.find();
+
+        return entities.map(entity =>
+            new Project({
+                id: entity.id,
+                name: entity.name,
+                primaryColor: entity.primaryColor,
+                logoUrl: entity.logoUrl,
+                loginUrl: entity.loginUrl
+            })
+        );
     }
 
     async save(project: Project): Promise<void> {
@@ -28,22 +43,23 @@ export class TypeOrmProjectRepository implements ProjectRepositoryPort {
             id: project.getId(),
             name: project.getName(),
             primaryColor: project.getPrimaryColor(),
-            logoUrl: project.getLogoUrl()
+            logoUrl: project.getLogoUrl(),
+            loginUrl: project.getLoginUrl()
         });
 
         await this.repository.save(entity);
     }
 
-    async findAll(): Promise<Project[]> {
-        const entities = await this.repository.find();
+    async update(project: Project): Promise<void> {
+        await this.repository.update(project.getId(), {
+            name: project.getName(),
+            primaryColor: project.getPrimaryColor(),
+            logoUrl: project.getLogoUrl(),
+            loginUrl: project.getLoginUrl()
+        });
+    }
 
-        return entities.map(entity => 
-            new Project({
-                id: entity.id,
-                name: entity.name,
-                primaryColor: entity.primaryColor,
-                logoUrl: entity.logoUrl
-            })
-        )
+    async delete(id: string): Promise<void> {
+        await this.repository.delete(id);
     }
 }

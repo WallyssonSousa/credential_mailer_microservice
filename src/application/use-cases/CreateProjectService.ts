@@ -20,7 +20,8 @@ export class CreateProjectService implements CreateProjectUseCase {
             id: uuidv4(),
             name: input.name,
             primaryColor: input.primaryColor,
-            logoUrl: input.logoUrl
+            logoUrl: input.logoUrl,
+            loginUrl: input.loginUrl
         });
 
         await this.projectRepository.save(project);
