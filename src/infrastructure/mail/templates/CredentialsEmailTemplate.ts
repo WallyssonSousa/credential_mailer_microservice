@@ -17,9 +17,8 @@ export function buildCredentialsEmailTemplate(
     ? `<img src="${data.logoUrl}" alt="${data.projectName}" style="height:36px;display:block;margin:0 auto;">`
     : `<span style="font-weight:700;font-size:15px;color:#1a1a2e;">${data.projectName}</span>`;
 
-  // Split token into groups of 3 for readability (e.g. ABC-DEF-GHI)
   const formattedToken = data.token.length >= 6
-    ? data.token.match(/.{1,3}/g)?.join("-") ?? data.token
+    ? data.token ?? data.token
     : data.token;
 
   return `<!DOCTYPE html>
