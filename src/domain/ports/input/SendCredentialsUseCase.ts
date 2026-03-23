@@ -4,6 +4,7 @@ export interface SendCredentialsInput {
     name: string;
     email: Email;
     projectId: string;
+    tempPassword: string;
 }
 
 export interface SendCredentialsUseCase {

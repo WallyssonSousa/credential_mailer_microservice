@@ -8,12 +8,13 @@ export class SendCredentialsController {
     ) {}
 
     async handle(req: Request, res: Response): Promise<Response> {
-        const { name, email, projectId } = req.body;
+        const { name, email, projectId, tempPassword } = req.body;
 
         await this.sendCredentialsUseCase.execute({
             name, 
             email: Email.create(email), 
-            projectId
+            projectId,
+            tempPassword
         });
 
         return res.status(200).json({ 

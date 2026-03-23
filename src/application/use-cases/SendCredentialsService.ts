@@ -32,8 +32,6 @@ export class SendCredentialsService implements SendCredentialsUseCase {
       projectId: project.getId(),
     });
 
-    const tempPassword = generateTemporaryPassword(8);
-
     const loginLink = `${project.getLoginUrl()}?token=${token}`;
 
     await this.mailProvider.send({
@@ -42,7 +40,7 @@ export class SendCredentialsService implements SendCredentialsUseCase {
       html: buildCredentialsEmailTemplate({
         userName: input.name,
         projectName,
-        token: tempPassword, 
+        token: input.tempPassword,
         primaryColor: project.getPrimaryColor(),
         logoUrl: project.getLogoUrl(),
         loginUrl: loginLink,
@@ -50,5 +48,5 @@ export class SendCredentialsService implements SendCredentialsUseCase {
     });
 
     return { success: true };
-  }
+}
 }
