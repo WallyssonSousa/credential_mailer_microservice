@@ -8,7 +8,8 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "prepare": "husky install",
-    "commit": "cz"
+    "commit": "cz",
+    "migration:run": "ts-node -r reflect-metadata migration.cli.ts"
   },
   "config": {
     "commitizen": {

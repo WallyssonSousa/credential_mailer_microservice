@@ -11,5 +11,6 @@ export const AppDataSource = new DataSource({
   password: env.db.password,
   database: env.db.name,
   entities: [ProjectEntity],
+  migrations: ['src/infrastructure/persistence/typeorm/migrations/*.ts'],
   synchronize: false,
 });
